@@ -2,12 +2,92 @@
 session_start();
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../classes/CompanyType.php';
+require_once __DIR__ . '/../../classes/FormConfig.php';
 
-$ct = new CompanyType();
+$ct    = new CompanyType();
 $types = $ct->getAll();
-$hideNav = true;
+$fc    = new FormConfig();
+
+// Get visible fields from DB, grouped
+$allFields = $fc->getFields('vendor_registration');
+
+// Separate file fields and regular fields by group
+$groups  = [];
+$files   = [];
+$docKeys = ['registration_certificate','ntn_certificate','tax_certificate','bank_statement','company_profile_doc'];
+
+foreach ($allFields as $field) {
+    if ($field['field_type'] === 'file') {
+        $files[] = $field;
+    } else {
+        $groups[$field['field_group']][] = $field;
+    }
+}
+
+// Step mapping (group → step number and title)
+$stepMap = [
+    'account'      => ['step' => 1, 'title' => 'Account',  'icon' => 'bi-person-circle'],
+    'company_info' => ['step' => 2, 'title' => 'Company',  'icon' => 'bi-building'],
+    'contact'      => ['step' => 3, 'title' => 'Contact',  'icon' => 'bi-person-lines-fill'],
+    'address'      => ['step' => 3, 'title' => 'Contact',  'icon' => 'bi-person-lines-fill'],
+    'documents'    => ['step' => 4, 'title' => 'Documents','icon' => 'bi-folder2-open'],
+];
+
+$hideNav   = true;
 $pageTitle = 'Vendor Registration';
 require_once __DIR__ . '/../../includes/header.php';
+
+// Helper: render one field
+function renderField(array $f, array $types): string {
+    $label    = htmlspecialchars($f['field_label']);
+    $name     = htmlspecialchars($f['field_name']);
+    $ph       = htmlspecialchars($f['placeholder'] ?? '');
+    $required = $f['is_mandatory'] ? 'required' : '';
+    $star     = $f['is_mandatory'] ? ' *' : '';
+    $help     = $f['help_text'] ? '<div class="form-text text-muted-vms">' . htmlspecialchars($f['help_text']) . '</div>' : '';
+
+    switch ($f['field_type']) {
+        case 'email':
+            return "<div class=\"col-md-6 mb-3\"><label class=\"form-label\">{$label}{$star}</label>
+                    <input type=\"email\" name=\"{$name}\" class=\"form-control form-control-vms\" {$required} placeholder=\"{$ph}\">{$help}</div>";
+
+        case 'number':
+            return "<div class=\"col-md-4 mb-3\"><label class=\"form-label\">{$label}{$star}</label>
+                    <input type=\"number\" name=\"{$name}\" class=\"form-control form-control-vms\" {$required} placeholder=\"{$ph}\" min=\"0\">{$help}</div>";
+
+        case 'date':
+            return "<div class=\"col-md-6 mb-3\"><label class=\"form-label\">{$label}{$star}</label>
+                    <input type=\"date\" name=\"{$name}\" class=\"form-control form-control-vms\" {$required}>{$help}</div>";
+
+        case 'textarea':
+            return "<div class=\"col-12 mb-3\"><label class=\"form-label\">{$label}{$star}</label>
+                    <textarea name=\"{$name}\" class=\"form-control form-control-vms\" rows=\"3\" {$required} placeholder=\"{$ph}\"></textarea>{$help}</div>";
+
+        case 'select':
+            // Special selects
+            if ($name === 'company_type_id') {
+                $opts = "<option value=\"\">-- Select Type --</option>";
+                foreach ($types as $t) {
+                    $opts .= "<option value=\"{$t['id']}\">" . htmlspecialchars($t['type_name']) . "</option>";
+                }
+                return "<div class=\"col-md-6 mb-3\"><label class=\"form-label\">{$label}{$star}</label>
+                        <select name=\"{$name}\" id=\"company_type\" class=\"form-select form-control-vms\" {$required}>{$opts}</select>{$help}</div>";
+            }
+            if ($name === 'company_subtype_id') {
+                return "<div class=\"col-md-6 mb-3\"><label class=\"form-label\">{$label}{$star}</label>
+                        <select name=\"{$name}\" id=\"company_subtype\" class=\"form-select form-control-vms\"><option value=\"\">-- Select Type First --</option></select>{$help}</div>";
+            }
+            return "<div class=\"col-md-6 mb-3\"><label class=\"form-label\">{$label}{$star}</label>
+                    <select name=\"{$name}\" class=\"form-select form-control-vms\" {$required}><option value=\"\">-- Select --</option></select>{$help}</div>";
+
+        case 'file':
+            return ""; // files handled separately
+
+        default: // text and custom cf_* fields
+            return "<div class=\"col-md-6 mb-3\"><label class=\"form-label\">{$label}{$star}</label>
+                    <input type=\"text\" name=\"{$name}\" class=\"form-control form-control-vms\" {$required} placeholder=\"{$ph}\">{$help}</div>";
+    }
+}
 ?>
 <div style="min-height:100vh;background:linear-gradient(135deg,var(--navy),#0d1f3c);padding:2rem 0">
 <div class="container" style="max-width:900px">
@@ -27,89 +107,107 @@ require_once __DIR__ . '/../../includes/header.php';
         <div class="step-divider"></div>
         <div class="step" data-step="3"><span class="step-number">3</span><span class="step-title">Contact</span></div>
         <div class="step-divider"></div>
-        <div class="step" data-step="4"><span class="step-number">4</span><span class="step-title">Banking</span></div>
-        <div class="step-divider"></div>
-        <div class="step" data-step="5"><span class="step-number">5</span><span class="step-title">Documents</span></div>
+        <div class="step" data-step="4"><span class="step-number">4</span><span class="step-title">Documents</span></div>
     </div>
 
-    <form id="vendor-reg-form" enctype="multipart/form-data">
+    <form id="vendor-reg-form" enctype="multipart/form-data" novalidate>
     <div class="card card-vms">
     <div class="card-body" style="padding:2rem">
 
-        <!-- Step 1: Account -->
+        <!-- ===== STEP 1: Account Credentials (always static) ===== -->
         <div class="form-step active" id="step-1">
             <h5 class="text-cyan mb-3"><i class="bi bi-person-circle"></i> Account Credentials</h5>
             <div class="row">
-                <div class="col-md-6 mb-3"><label class="form-label">Username *</label><input type="text" name="username" class="form-control form-control-vms" required placeholder="Choose a username"></div>
-                <div class="col-md-6 mb-3"><label class="form-label">Email *</label><input type="email" name="email" class="form-control form-control-vms" required placeholder="your@email.com"></div>
-                <div class="col-md-6 mb-3"><label class="form-label">Password *</label><input type="password" name="password" class="form-control form-control-vms" required minlength="6" placeholder="Min 6 characters"></div>
-                <div class="col-md-6 mb-3"><label class="form-label">Confirm Password *</label><input type="password" name="password_confirm" class="form-control form-control-vms" required placeholder="Repeat password"></div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Username *</label>
+                    <input type="text" name="username" class="form-control form-control-vms" required placeholder="Choose a username">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Email *</label>
+                    <input type="email" name="email" class="form-control form-control-vms" required placeholder="your@email.com">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Password *</label>
+                    <input type="password" name="password" class="form-control form-control-vms" required minlength="6" placeholder="Min 6 characters">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Confirm Password *</label>
+                    <input type="password" name="password_confirm" class="form-control form-control-vms" required placeholder="Repeat password">
+                </div>
             </div>
             <div class="text-end mt-3"><button type="button" class="btn btn-cyan btn-next">Next <i class="bi bi-arrow-right"></i></button></div>
         </div>
 
-        <!-- Step 2: Company Info -->
+        <!-- ===== STEP 2: Company Info (dynamic from DB) ===== -->
         <div class="form-step" id="step-2">
             <h5 class="text-cyan mb-3"><i class="bi bi-building"></i> Company Information</h5>
             <div class="row">
-                <div class="col-md-6 mb-3"><label class="form-label">Company Name *</label><input type="text" name="company_name" class="form-control form-control-vms" required></div>
-                <div class="col-md-6 mb-3"><label class="form-label">Registration No *</label><input type="text" name="company_registration_no" class="form-control form-control-vms" required></div>
-                <div class="col-md-6 mb-3"><label class="form-label">Company Type *</label>
-                    <select name="company_type_id" id="company_type" class="form-select form-control-vms" required>
-                        <option value="">-- Select Type --</option>
-                        <?php foreach ($types as $t): ?><option value="<?= $t['id'] ?>"><?= htmlspecialchars($t['type_name']) ?></option><?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="col-md-6 mb-3"><label class="form-label">Sub-Type</label><select name="company_subtype_id" id="company_subtype" class="form-select form-control-vms"><option value="">-- Select Type First --</option></select></div>
-                <div class="col-md-4 mb-3"><label class="form-label">NTN Number</label><input type="text" name="ntn_number" class="form-control form-control-vms"></div>
-                <div class="col-md-4 mb-3"><label class="form-label">Years in Business</label><input type="number" name="years_in_business" class="form-control form-control-vms" min="0"></div>
-                <div class="col-md-4 mb-3"><label class="form-label">Employees</label><input type="number" name="number_of_employees" class="form-control form-control-vms" min="1"></div>
-                <div class="col-12 mb-3"><label class="form-label">Business Description</label><textarea name="business_description" class="form-control form-control-vms" rows="3"></textarea></div>
+                <?php
+                $companyGroups = ['company_info'];
+                foreach ($companyGroups as $grp) {
+                    if (!empty($groups[$grp])) {
+                        foreach ($groups[$grp] as $f) {
+                            echo renderField($f, $types);
+                        }
+                    }
+                }
+                ?>
             </div>
-            <div class="d-flex justify-content-between mt-3"><button type="button" class="btn btn-outline-cyan btn-prev"><i class="bi bi-arrow-left"></i> Back</button><button type="button" class="btn btn-cyan btn-next">Next <i class="bi bi-arrow-right"></i></button></div>
+            <div class="d-flex justify-content-between mt-3">
+                <button type="button" class="btn btn-outline-cyan btn-prev"><i class="bi bi-arrow-left"></i> Back</button>
+                <button type="button" class="btn btn-cyan btn-next">Next <i class="bi bi-arrow-right"></i></button>
+            </div>
         </div>
 
-        <!-- Step 3: Contact & Address -->
+        <!-- ===== STEP 3: Contact & Address (dynamic from DB) ===== -->
         <div class="form-step" id="step-3">
             <h5 class="text-cyan mb-3"><i class="bi bi-person-lines-fill"></i> Contact & Address</h5>
             <div class="row">
-                <div class="col-md-6 mb-3"><label class="form-label">Primary Contact Name *</label><input type="text" name="primary_contact_name" class="form-control form-control-vms" required></div>
-                <div class="col-md-6 mb-3"><label class="form-label">Phone *</label><input type="text" name="primary_contact_phone" class="form-control form-control-vms" required></div>
-                <div class="col-md-6 mb-3"><label class="form-label">Contact Email *</label><input type="email" name="primary_contact_email" class="form-control form-control-vms" required></div>
-                <div class="col-md-6 mb-3"><label class="form-label">CNIC</label><input type="text" name="primary_contact_cnic" class="form-control form-control-vms"></div>
+                <?php
+                $contactGroups = ['contact'];
+                foreach ($contactGroups as $grp) {
+                    if (!empty($groups[$grp])) {
+                        foreach ($groups[$grp] as $f) {
+                            echo renderField($f, $types);
+                        }
+                    }
+                }
+                ?>
+                <?php if (!empty($groups['address'])): ?>
                 <div class="col-12"><hr style="border-color:var(--navy-mid)"><p class="text-muted-vms" style="font-size:0.8rem">ADDRESS</p></div>
-                <div class="col-md-6 mb-3"><label class="form-label">Address Line 1 *</label><input type="text" name="address_line1" class="form-control form-control-vms" required></div>
-                <div class="col-md-6 mb-3"><label class="form-label">Address Line 2</label><input type="text" name="address_line2" class="form-control form-control-vms"></div>
-                <div class="col-md-4 mb-3"><label class="form-label">City *</label><input type="text" name="city" class="form-control form-control-vms" required></div>
-                <div class="col-md-4 mb-3"><label class="form-label">State/Province</label><input type="text" name="state_province" class="form-control form-control-vms"></div>
-                <div class="col-md-4 mb-3"><label class="form-label">Country</label><input type="text" name="country" class="form-control form-control-vms" value="Pakistan"></div>
+                <?php foreach ($groups['address'] as $f): echo renderField($f, $types); endforeach; ?>
+                <?php endif; ?>
             </div>
-            <div class="d-flex justify-content-between mt-3"><button type="button" class="btn btn-outline-cyan btn-prev"><i class="bi bi-arrow-left"></i> Back</button><button type="button" class="btn btn-cyan btn-next">Next <i class="bi bi-arrow-right"></i></button></div>
+            <div class="d-flex justify-content-between mt-3">
+                <button type="button" class="btn btn-outline-cyan btn-prev"><i class="bi bi-arrow-left"></i> Back</button>
+                <button type="button" class="btn btn-cyan btn-next">Next <i class="bi bi-arrow-right"></i></button>
+            </div>
         </div>
 
-        <!-- Step 4: Banking -->
+        <!-- ===== STEP 4: Documents (dynamic from DB) ===== -->
         <div class="form-step" id="step-4">
-            <h5 class="text-cyan mb-3"><i class="bi bi-bank2"></i> Banking Information</h5>
-            <div class="row">
-                <div class="col-md-6 mb-3"><label class="form-label">Bank Name</label><input type="text" name="bank_name" class="form-control form-control-vms"></div>
-                <div class="col-md-6 mb-3"><label class="form-label">Account Title</label><input type="text" name="bank_account_title" class="form-control form-control-vms"></div>
-                <div class="col-md-6 mb-3"><label class="form-label">Account No</label><input type="text" name="bank_account_no" class="form-control form-control-vms"></div>
-                <div class="col-md-6 mb-3"><label class="form-label">Branch</label><input type="text" name="bank_branch" class="form-control form-control-vms"></div>
-                <div class="col-md-6 mb-3"><label class="form-label">IBAN</label><input type="text" name="iban" class="form-control form-control-vms"></div>
-            </div>
-            <div class="d-flex justify-content-between mt-3"><button type="button" class="btn btn-outline-cyan btn-prev"><i class="bi bi-arrow-left"></i> Back</button><button type="button" class="btn btn-cyan btn-next">Next <i class="bi bi-arrow-right"></i></button></div>
-        </div>
-
-        <!-- Step 5: Documents -->
-        <div class="form-step" id="step-5">
             <h5 class="text-cyan mb-3"><i class="bi bi-folder2-open"></i> Document Upload</h5>
             <p class="text-muted-vms" style="font-size:0.85rem">Accepted: PDF, JPG, PNG — Max 5MB each</p>
+            <?php if (empty($files)): ?>
+                <div class="alert" style="background:var(--navy-mid);color:var(--text-light)">No document fields configured.</div>
+            <?php else: ?>
             <div class="row">
-                <div class="col-md-6 mb-3"><label class="form-label">Registration Certificate *</label><input type="file" name="registration_certificate" class="form-control form-control-vms" required accept=".pdf,.jpg,.jpeg,.png"></div>
-                <div class="col-md-6 mb-3"><label class="form-label">NTN Certificate</label><input type="file" name="ntn_certificate" class="form-control form-control-vms" accept=".pdf,.jpg,.jpeg,.png"></div>
-                <div class="col-md-6 mb-3"><label class="form-label">Tax Certificate</label><input type="file" name="tax_certificate" class="form-control form-control-vms" accept=".pdf,.jpg,.jpeg,.png"></div>
-                <div class="col-md-6 mb-3"><label class="form-label">Bank Statement</label><input type="file" name="bank_statement" class="form-control form-control-vms" accept=".pdf,.jpg,.jpeg,.png"></div>
+                <?php foreach ($files as $f):
+                    $star     = $f['is_mandatory'] ? ' *' : '';
+                    $required = $f['is_mandatory'] ? 'required' : '';
+                ?>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label"><?= htmlspecialchars($f['field_label']) ?><?= $star ?></label>
+                    <input type="file" name="<?= htmlspecialchars($f['field_name']) ?>"
+                        class="form-control form-control-vms" <?= $required ?>
+                        accept=".pdf,.jpg,.jpeg,.png">
+                    <?php if ($f['help_text']): ?>
+                        <div class="form-text text-muted-vms"><?= htmlspecialchars($f['help_text']) ?></div>
+                    <?php endif; ?>
+                </div>
+                <?php endforeach; ?>
             </div>
+            <?php endif; ?>
             <div class="d-flex justify-content-between mt-3">
                 <button type="button" class="btn btn-outline-cyan btn-prev"><i class="bi bi-arrow-left"></i> Back</button>
                 <button type="submit" class="btn btn-cyan" id="submit-btn"><i class="bi bi-send"></i> Submit Registration</button>
@@ -124,15 +222,23 @@ require_once __DIR__ . '/../../includes/header.php';
 
 <script src="/VendorM/public/assets/js/jquery.min.js"></script>
 <script src="/VendorM/public/assets/js/bootstrap.bundle.min.js"></script>
-
 <script src="/VendorM/public/assets/js/main.js"></script>
 <script>
 $('#vendor-reg-form').on('submit', function(e) {
     e.preventDefault();
+
+    if (!this.checkValidity()) {
+        showToast('Form contains incomplete or invalid fields. Please review all steps.', 'danger');
+        return;
+    }
+
     // Validate passwords match
     const pw = $('input[name="password"]').val();
     const pw2 = $('input[name="password_confirm"]').val();
-    if (pw !== pw2) { showToast('Passwords do not match', 'danger'); return; }
+    if (pw !== pw2) {
+        showToast('Passwords do not match', 'danger');
+        return;
+    }
 
     const fd = new FormData(this);
     $('#submit-btn').prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Submitting...');

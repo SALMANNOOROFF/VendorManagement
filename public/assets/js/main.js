@@ -35,15 +35,15 @@ $(document).ready(function() {
 
     function validateStep(step) {
         let valid = true;
-        $('#step-' + step + ' [required]').each(function() {
-            if (!$(this).val()) {
+        $('#step-' + step).find('input, select, textarea').each(function() {
+            if (typeof this.checkValidity === 'function' && !this.checkValidity()) {
                 $(this).addClass('is-invalid');
                 valid = false;
             } else {
                 $(this).removeClass('is-invalid');
             }
         });
-        if (!valid) showToast('Please fill all required fields.', 'warning');
+        if (!valid) showToast('Please fill all required fields correctly.', 'warning');
         return valid;
     }
 

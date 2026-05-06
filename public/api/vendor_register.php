@@ -16,11 +16,24 @@ $userModel = new User();
 $vendorModel = new Vendor();
 $upload = new FileUpload();
 
-// Validate required fields
-$required = ['username','email','password','company_name','company_type_id','primary_contact_name','primary_contact_phone','primary_contact_email','address_line1','city'];
+// Fetch mandatory fields from DB
+$fc = new FormConfig();
+$configFields = $fc->getFields('vendor_registration');
+$required = [];
+foreach ($configFields as $f) {
+    if ($f['is_mandatory']) {
+        $required[] = $f['field_name'];
+    }
+}
+// Account basics are always required if not in config
+$required = array_unique(array_merge($required, ['username', 'email', 'password']));
+
 foreach ($required as $f) {
     if (empty(trim($_POST[$f] ?? ''))) {
-        echo json_encode(['success' => false, 'message' => "Field '{$f}' is required."]); exit;
+        // Check if it's a file
+        if (!isset($_FILES[$f]) || $_FILES[$f]['error'] !== UPLOAD_ERR_OK) {
+            echo json_encode(['success' => false, 'message' => "Field '" . ($f) . "' is required."]); exit;
+        }
     }
 }
 
