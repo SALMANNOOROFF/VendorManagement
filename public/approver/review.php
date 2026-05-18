@@ -3,6 +3,7 @@ require_once __DIR__ . '/../../middleware/role_check.php';
 checkRole(['approver','super_admin']);
 require_once __DIR__ . '/../../classes/Vendor.php';
 require_once __DIR__ . '/../../classes/AuditLog.php';
+require_once __DIR__ . '/../../classes/Notification.php';
 
 $vendorModel = new Vendor();
 $id = (int)($_GET['id'] ?? 0);
@@ -14,9 +15,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
     $comments = trim($_POST['comments'] ?? '');
     $audit = new AuditLog();
+    $notif = new Notification();
     if ($action === 'approve') {
         if ($vendorModel->approve($id, $_SESSION['user_id'], $comments)) {
             $audit->log($_SESSION['user_id'], 'vendor_approved', 'vendor', $id);
+            
+            $title = "Vendor Account Approved";
+            $msg = "Your vendor registration has been approved by the approver. You now have full dashboard access!";
+            if (!empty($comments)) {
+                $msg .= " Remarks: \"{$comments}\"";
+            }
+            $notif->create($vendor['user_id'], $title, $msg, '/VendorM/public/vendor/dashboard.php');
+
             $success = 'Vendor approved successfully.';
             $vendor = $vendorModel->getById($id);
         } else { $error = 'Failed to approve.'; }
@@ -25,6 +35,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         else {
             if ($vendorModel->reject($id, $_SESSION['user_id'], $comments)) {
                 $audit->log($_SESSION['user_id'], 'vendor_rejected', 'vendor', $id);
+                
+                $title = "Vendor Account Rejected";
+                $msg = "Your vendor registration has been rejected by the approver. Remarks: \"{$comments}\"";
+                $notif->create($vendor['user_id'], $title, $msg, null);
+
                 $success = 'Vendor rejected.';
                 $vendor = $vendorModel->getById($id);
             } else { $error = 'Failed to reject.'; }
@@ -33,16 +48,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $pageTitle = 'Review Vendor';
-require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/sidebar_approver.php';
+require_once __DIR__ . '/../../includes/header.php';
 ?>
 <div class="main-content fade-in">
     <div class="page-header">
-        <h1><i class="bi bi-search text-cyan"></i> Review: <?= htmlspecialchars($vendor['company_name']) ?></h1>
+        <h1><i class="bi bi-search"></i> Review: <?= htmlspecialchars($vendor['company_name']) ?></h1>
         <p>Status: <span class="badge badge-<?= $vendor['verification_status'] === 'verified' ? 'approved' : ($vendor['verification_status'] === 'rejected' ? 'rejected' : 'pending') ?>"><?= ucfirst($vendor['verification_status']) ?></span></p>
     </div>
-    <?php if ($success): ?><div class="alert alert-vms alert-success"><?= $success ?></div><?php endif; ?>
-    <?php if ($error): ?><div class="alert alert-vms alert-danger"><?= $error ?></div><?php endif; ?>
+    <?php if ($success): ?>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        showToast(<?= json_encode($success) ?>, 'success');
+    });
+    </script>
+    <?php endif; ?>
+    <?php if ($error): ?>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        showToast(<?= json_encode($error) ?>, 'danger');
+    });
+    </script>
+    <?php endif; ?>
     <div class="row g-3">
         <div class="col-md-8">
             <div class="card card-vms mb-3"><div class="card-header"><i class="bi bi-building"></i> Company Information</div><div class="card-body">
@@ -76,19 +103,54 @@ require_once __DIR__ . '/../../includes/sidebar_approver.php';
         <div class="col-md-4">
             <?php if ($vendor['verification_status'] === 'pending' || $vendor['verification_status'] === 'under_review'): ?>
             <div class="card card-vms"><div class="card-header"><i class="bi bi-check2-square"></i> Decision</div><div class="card-body">
-                <form method="POST">
-                    <div class="mb-3"><label class="form-label">Comments</label><textarea name="comments" class="form-control form-control-vms" rows="4" placeholder="Required for rejection"></textarea></div>
-                    <button type="submit" name="action" value="approve" class="btn btn-cyan w-100 mb-2"><i class="bi bi-check-circle"></i> Approve Vendor</button>
-                    <button type="submit" name="action" value="reject" class="btn btn-danger w-100"><i class="bi bi-x-circle"></i> Reject Vendor</button>
+                <form method="POST" id="decisionForm">
+                    <input type="hidden" name="action" id="decisionAction" value="">
+                    <input type="hidden" name="comments" id="decisionComments" value="">
+                    <button type="button" onclick="handleDecision('approve')" class="btn btn-cyan w-100 mb-2"><i class="bi bi-check-circle"></i> Approve Vendor</button>
+                    <button type="button" onclick="handleDecision('reject')" class="btn btn-danger w-100"><i class="bi bi-x-circle"></i> Reject Vendor</button>
                 </form>
             </div></div>
             <?php else: ?>
-            <div class="card card-vms"><div class="card-header">Decision Made</div><div class="card-body">
-                <p>This vendor has been <strong><?= $vendor['verification_status'] ?></strong>.</p>
-                <?php if ($vendor['rejection_reason']): ?><p class="text-muted-vms">Reason: <?= htmlspecialchars($vendor['rejection_reason']) ?></p><?php endif; ?>
-            </div></div>
+            <div class="card card-vms">
+                <div class="card-header">Decision Made</div>
+                <div class="card-body">
+                    <div class="w-100 text-center py-2">
+                        <?php if ($vendor['verification_status'] === 'verified'): ?>
+                            <span class="badge bg-success rounded-pill px-3 py-2 w-100" style="font-size: 0.95rem;">
+                                <i class="bi bi-check-circle-fill me-1"></i> Approved
+                            </span>
+                        <?php else: ?>
+                            <span class="badge bg-danger rounded-pill px-3 py-2 w-100" style="font-size: 0.95rem;">
+                                <i class="bi bi-x-circle-fill me-1"></i> Rejected
+                            </span>
+                        <?php endif; ?>
+                        <?php if (!empty($vendor['rejection_reason'])): ?>
+                            <div class="mt-3 p-3 bg-light rounded text-start" style="font-size: 0.9rem; border-left: 4px solid var(--primary);">
+                                <div class="text-muted small mb-1 fw-bold">REMARKS:</div>
+                                <div style="color: var(--dark); font-style: italic;">"<?= htmlspecialchars($vendor['rejection_reason']) ?>"</div>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
             <?php endif; ?>
         </div>
     </div>
 </div>
+
+<script>
+function handleDecision(action) {
+    const title = action === 'approve' ? 'Approve Vendor' : 'Reject Vendor';
+    const message = action === 'approve' ? 'Are you sure you want to approve this vendor? Please provide optional remarks.' : 'Are you sure you want to reject this vendor? Please provide mandatory remarks.';
+    const btnText = action === 'approve' ? 'Approve' : 'Reject';
+    const btnColor = action === 'approve' ? 'var(--success)' : 'var(--danger)';
+    const requireRemarks = action === 'reject';
+
+    showActionModal(title, message, btnText, btnColor, requireRemarks, function(remarks) {
+        document.getElementById('decisionAction').value = action;
+        document.getElementById('decisionComments').value = remarks;
+        document.getElementById('decisionForm').submit();
+    });
+}
+</script>
 <?php require_once __DIR__ . '/../../includes/footer.php'; ?>

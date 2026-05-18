@@ -1,48 +1,13 @@
-<?php $appUrl = '/VendorM/public'; $current = basename($_SERVER['PHP_SELF']); ?>
-<!-- Mobile overlay -->
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-<div class="sidebar" id="sidebarNav">
-    <!-- Mobile user info -->
-    <div class="sidebar-mobile-header d-md-none">
-        <div class="d-flex align-items-center gap-2 px-3 py-2" style="border-bottom:1px solid var(--navy-mid)">
-            <i class="bi bi-person-circle" style="color:var(--cyan);font-size:1.3rem"></i>
-            <div>
-                <div style="color:var(--white);font-size:0.85rem;font-weight:600"><?= htmlspecialchars($_SESSION['username'] ?? '') ?></div>
-                <div style="color:var(--gray-mid);font-size:0.7rem"><?= ucfirst(str_replace('_', ' ', $_SESSION['role_name'] ?? '')) ?></div>
-            </div>
-        </div>
-    </div>
-    <div class="nav-section">Main</div>
-    <a class="nav-link <?= $current === 'dashboard.php' ? 'active' : '' ?>" href="<?= $appUrl ?>/admin/dashboard.php">
-        <i class="bi bi-grid-1x2-fill"></i> Dashboard
-    </a>
-    <div class="nav-section">Vendor Management</div>
-    <a class="nav-link <?= $current === 'list.php' && strpos($_SERVER['PHP_SELF'], 'vendors') !== false ? 'active' : '' ?>" href="<?= $appUrl ?>/admin/vendors/list.php">
-        <i class="bi bi-building"></i> All Vendors
-    </a>
-    <div class="nav-section">User Management</div>
-    <a class="nav-link <?= $current === 'list.php' && strpos($_SERVER['PHP_SELF'], 'users') !== false ? 'active' : '' ?>" href="<?= $appUrl ?>/admin/users/list.php">
-        <i class="bi bi-people-fill"></i> Users
-    </a>
-    <a class="nav-link <?= $current === 'create.php' ? 'active' : '' ?>" href="<?= $appUrl ?>/admin/users/create.php">
-        <i class="bi bi-person-plus-fill"></i> Create User
-    </a>
-    <div class="nav-section">Configuration</div>
-    <a class="nav-link <?= strpos($_SERVER['PHP_SELF'], 'form_config') !== false ? 'active' : '' ?>" href="<?= $appUrl ?>/admin/form_config/manage.php">
-        <i class="bi bi-sliders"></i> Form Fields
-    </a>
-    <a class="nav-link <?= strpos($_SERVER['PHP_SELF'], 'company_types') !== false ? 'active' : '' ?>" href="<?= $appUrl ?>/admin/company_types/list.php">
-        <i class="bi bi-tags-fill"></i> Company Types
-    </a>
-    <a class="nav-link <?= strpos($_SERVER['PHP_SELF'], 'roles') !== false ? 'active' : '' ?>" href="<?= $appUrl ?>/admin/roles/list.php">
-        <i class="bi bi-shield-lock-fill"></i> Roles
-    </a>
-    <div class="nav-section">Audit</div>
-    <a class="nav-link <?= $current === 'audit_logs.php' ? 'active' : '' ?>" href="<?= $appUrl ?>/admin/audit_logs.php">
-        <i class="bi bi-clock-history"></i> Audit Logs
-    </a>
-    <!-- Mobile logout -->
-    <div class="d-md-none" style="border-top:1px solid var(--navy-mid);margin-top:1rem;padding-top:0.5rem">
-        <a class="nav-link" href="<?= $appUrl ?>/logout.php"><i class="bi bi-box-arrow-right"></i> Logout</a>
-    </div>
-</div>
+<?php
+// Admin navigation links — used by header.php
+$appUrl = $appUrl ?? '/VendorM/public';
+$navLinks = [
+    ['label' => 'Dashboard', 'icon' => 'bi-grid-1x2-fill', 'href' => $appUrl.'/admin/dashboard.php'],
+    ['label' => 'Vendors', 'icon' => 'bi-building', 'href' => $appUrl.'/admin/vendors/list.php', 'match' => 'vendors'],
+    ['label' => 'Users', 'icon' => 'bi-people-fill', 'href' => $appUrl.'/admin/users/list.php', 'match' => 'users'],
+    ['label' => 'Form Fields', 'icon' => 'bi-sliders', 'href' => $appUrl.'/admin/form_config/manage.php', 'match' => 'form_config'],
+    ['label' => 'Company Types', 'icon' => 'bi-tags-fill', 'href' => $appUrl.'/admin/company_types/list.php', 'match' => 'company_types'],
+    ['label' => 'Roles', 'icon' => 'bi-shield-lock-fill', 'href' => $appUrl.'/admin/roles/list.php', 'match' => 'roles'],
+    ['label' => 'Audit Logs', 'icon' => 'bi-clock-history', 'href' => $appUrl.'/admin/audit_logs.php'],
+];
+?>

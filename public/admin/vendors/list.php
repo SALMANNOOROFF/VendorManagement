@@ -5,13 +5,14 @@ require_once __DIR__ . '/../../../classes/Vendor.php';
 $vendorModel = new Vendor();
 $vendors = $vendorModel->getAll();
 $pageTitle = 'All Vendors';
-require_once __DIR__ . '/../../../includes/header.php';
 require_once __DIR__ . '/../../../includes/sidebar_admin.php';
+require_once __DIR__ . '/../../../includes/header.php';
 ?>
 <div class="main-content fade-in">
-    <div class="page-header"><h1><i class="bi bi-building text-cyan"></i> All Vendors</h1><p>Complete vendor registry</p></div>
+    <div class="page-header"><h1><i class="bi bi-building"></i> All Vendors</h1><p>Complete vendor registry</p></div>
     <div class="card card-vms">
         <div class="card-body p-0">
+            <div class="table-responsive">
             <table class="table table-vms mb-0">
                 <thead><tr><th>#</th><th>Company</th><th>Type</th><th>Contact</th><th>City</th><th>Status</th><th>Date</th></tr></thead>
                 <tbody>
@@ -29,6 +30,7 @@ require_once __DIR__ . '/../../../includes/sidebar_admin.php';
                 <?php if (empty($vendors)): ?><tr><td colspan="7" class="empty-state">No vendors registered yet</td></tr><?php endif; ?>
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 </div>

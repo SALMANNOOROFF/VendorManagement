@@ -20,20 +20,20 @@ $recentVendors = $vendor->getAll();
 $recentVendors = array_slice($recentVendors, 0, 10);
 
 $pageTitle = 'Admin Dashboard';
-require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/sidebar_admin.php';
+require_once __DIR__ . '/../../includes/header.php';
 ?>
 <div class="main-content fade-in">
     <div class="page-header">
-        <h1><i class="bi bi-grid-1x2-fill text-cyan"></i> Dashboard</h1>
+        <h1><i class="bi bi-grid-1x2-fill"></i> Dashboard</h1>
         <p>System overview and recent activity</p>
     </div>
 
     <div class="row g-3 mb-4">
-        <div class="col-md-3 col-sm-6"><div class="stat-card stat-warning"><div class="stat-number"><?= $stats['pending'] ?></div><div class="stat-label">Pending Vendors</div></div></div>
-        <div class="col-md-3 col-sm-6"><div class="stat-card stat-success"><div class="stat-number"><?= $stats['verified'] ?></div><div class="stat-label">Approved Vendors</div></div></div>
-        <div class="col-md-3 col-sm-6"><div class="stat-card stat-danger"><div class="stat-number"><?= $stats['rejected'] ?></div><div class="stat-label">Rejected</div></div></div>
-        <div class="col-md-3 col-sm-6"><div class="stat-card"><div class="stat-number"><?= $stats['workers'] ?></div><div class="stat-label">Active Workers</div></div></div>
+        <div class="col-md-3 col-6"><div class="stat-card stat-warning"><div class="stat-number"><?= $stats['pending'] ?></div><div class="stat-label">Pending Vendors</div></div></div>
+        <div class="col-md-3 col-6"><div class="stat-card stat-success"><div class="stat-number"><?= $stats['verified'] ?></div><div class="stat-label">Approved Vendors</div></div></div>
+        <div class="col-md-3 col-6"><div class="stat-card stat-danger"><div class="stat-number"><?= $stats['rejected'] ?></div><div class="stat-label">Rejected</div></div></div>
+        <div class="col-md-3 col-6"><div class="stat-card"><div class="stat-number"><?= $stats['workers'] ?></div><div class="stat-label">Active Workers</div></div></div>
     </div>
 
     <div class="card card-vms">
@@ -42,6 +42,7 @@ require_once __DIR__ . '/../../includes/sidebar_admin.php';
             <a href="vendors/list.php" class="btn btn-outline-cyan btn-sm">View All</a>
         </div>
         <div class="card-body p-0">
+            <div class="table-responsive">
             <table class="table table-vms mb-0">
                 <thead><tr><th>Company</th><th>Type</th><th>Contact</th><th>Status</th><th>Registered</th></tr></thead>
                 <tbody>
@@ -59,6 +60,7 @@ require_once __DIR__ . '/../../includes/sidebar_admin.php';
                 <?php endif; ?>
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 </div>

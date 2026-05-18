@@ -6,8 +6,8 @@ $vendorModel = new Vendor();
 $vendor = $vendorModel->getByUserId($_SESSION['user_id']);
 if (!$vendor) { header('Location: dashboard.php'); exit; }
 $pageTitle = 'Documents';
-require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/sidebar_vendor.php';
+require_once __DIR__ . '/../../includes/header.php';
 
 $docs = [
     'Registration Certificate' => $vendor['registration_certificate'],
@@ -18,13 +18,13 @@ $docs = [
 ];
 ?>
 <div class="main-content fade-in">
-    <div class="page-header"><h1><i class="bi bi-folder2-open text-cyan"></i> Documents</h1></div>
+    <div class="page-header"><h1><i class="bi bi-folder2-open"></i> Documents</h1></div>
     <div class="row g-3">
         <?php foreach ($docs as $label => $path): ?>
         <div class="col-md-6">
             <div class="card card-vms">
                 <div class="card-body d-flex justify-content-between align-items-center">
-                    <div><i class="bi bi-file-earmark-text text-cyan" style="font-size:1.5rem"></i> <strong><?= $label ?></strong></div>
+                    <div><i class="bi bi-file-earmark-text" style="font-size:1.5rem;color:var(--primary)"></i> <strong><?= $label ?></strong></div>
                     <?php if ($path): ?>
                     <span class="badge badge-approved">Uploaded</span>
                     <?php else: ?>

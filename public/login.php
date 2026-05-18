@@ -31,7 +31,7 @@ require_once __DIR__ . '/../includes/header.php';
 <div class="auth-wrapper">
     <div class="auth-card fade-in">
         <div class="logo">
-            <i class="bi bi-shield-check" style="font-size:2.5rem;color:var(--cyan)"></i>
+            <i class="bi bi-shield-check" style="font-size:2.5rem;color:var(--primary)"></i>
             <h2>VMS Portal</h2>
             <p>Sign in to your account</p>
         </div>
@@ -55,7 +55,7 @@ require_once __DIR__ . '/../includes/header.php';
             </button>
         </form>
         <div class="text-center">
-            <span class="text-muted-vms" style="font-size:0.85rem">New vendor? </span>
+            <span style="color:var(--gray-mid);font-size:0.85rem">New vendor? </span>
             <a href="vendor/register.php" style="font-size:0.85rem">Register here</a>
         </div>
     </div>

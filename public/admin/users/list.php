@@ -5,16 +5,17 @@ require_once __DIR__ . '/../../../classes/User.php';
 $userModel = new User();
 $users = $userModel->getAll();
 $pageTitle = 'Manage Users';
-require_once __DIR__ . '/../../../includes/header.php';
 require_once __DIR__ . '/../../../includes/sidebar_admin.php';
+require_once __DIR__ . '/../../../includes/header.php';
 ?>
 <div class="main-content fade-in">
-    <div class="page-header d-flex justify-content-between align-items-center">
-        <div><h1><i class="bi bi-people-fill text-cyan"></i> Users</h1><p>Manage all system users</p></div>
+    <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div><h1><i class="bi bi-people-fill"></i> Users</h1><p>Manage all system users</p></div>
         <a href="create.php" class="btn btn-cyan"><i class="bi bi-person-plus"></i> Create User</a>
     </div>
     <div class="card card-vms">
         <div class="card-body p-0">
+            <div class="table-responsive">
             <table class="table table-vms mb-0">
                 <thead><tr><th>Username</th><th>Email</th><th>Role</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
                 <tbody>
@@ -30,6 +31,7 @@ require_once __DIR__ . '/../../../includes/sidebar_admin.php';
                 <?php endforeach; ?>
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 </div>

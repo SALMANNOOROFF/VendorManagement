@@ -24,11 +24,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $pageTitle = 'Edit User';
-require_once __DIR__ . '/../../../includes/header.php';
 require_once __DIR__ . '/../../../includes/sidebar_admin.php';
+require_once __DIR__ . '/../../../includes/header.php';
 ?>
 <div class="main-content fade-in">
-    <div class="page-header"><h1><i class="bi bi-pencil-fill text-cyan"></i> Edit User</h1><p>Editing: <?= htmlspecialchars($u['username']) ?></p></div>
+    <div class="page-header"><h1><i class="bi bi-pencil-fill"></i> Edit User</h1><p>Editing: <?= htmlspecialchars($u['username']) ?></p></div>
     <?php if ($error): ?><div class="alert alert-vms alert-danger"><?= $error ?></div><?php endif; ?>
     <?php if ($success): ?><div class="alert alert-vms alert-success"><?= $success ?></div><?php endif; ?>
     <div class="card card-vms" style="max-width:600px">

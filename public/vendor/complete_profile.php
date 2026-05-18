@@ -7,8 +7,6 @@ require_once __DIR__ . '/../../classes/AuditLog.php';
 
 $vendorModel = new Vendor();
 $vendor = $vendorModel->getByUserId($_SESSION['user_id']);
-
-// If vendor profile already exists, redirect to dashboard
 if ($vendor) { header('Location: dashboard.php'); exit; }
 
 $ct = new CompanyType();
@@ -36,11 +34,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $pageTitle = 'Complete Profile';
-require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/sidebar_vendor.php';
+require_once __DIR__ . '/../../includes/header.php';
 ?>
 <div class="main-content fade-in">
-    <div class="page-header"><h1><i class="bi bi-building text-cyan"></i> Complete Your Company Profile</h1><p>Fill in your company details to activate your vendor account</p></div>
+    <div class="page-header"><h1><i class="bi bi-building"></i> Complete Your Company Profile</h1><p>Fill in your company details to activate your vendor account</p></div>
     <?php if ($error): ?><div class="alert alert-vms alert-danger"><?= $error ?></div><?php endif; ?>
 
     <form method="POST">

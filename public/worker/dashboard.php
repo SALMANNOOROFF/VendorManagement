@@ -7,8 +7,8 @@ $w = $workerModel->getByUserId($_SESSION['user_id']);
 $pageTitle = 'Worker Dashboard';
 require_once __DIR__ . '/../../includes/header.php';
 ?>
-<div style="margin:0 auto;max-width:800px;padding:2rem" class="fade-in">
-    <div class="page-header"><h1><i class="bi bi-person-circle text-cyan"></i> My Profile</h1><p>Welcome, <?= htmlspecialchars($_SESSION['username']) ?></p></div>
+<div class="main-content fade-in" style="max-width:800px">
+    <div class="page-header"><h1><i class="bi bi-person-circle"></i> My Profile</h1><p>Welcome, <?= htmlspecialchars($_SESSION['username']) ?></p></div>
     <?php if ($w): ?>
     <div class="row g-3">
         <div class="col-md-6"><div class="card card-vms"><div class="card-header">Personal</div><div class="card-body">

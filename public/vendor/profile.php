@@ -6,11 +6,11 @@ $vendorModel = new Vendor();
 $vendor = $vendorModel->getByUserId($_SESSION['user_id']);
 if (!$vendor) { header('Location: dashboard.php'); exit; }
 $pageTitle = 'Company Profile';
-require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/sidebar_vendor.php';
+require_once __DIR__ . '/../../includes/header.php';
 ?>
 <div class="main-content fade-in">
-    <div class="page-header"><h1><i class="bi bi-building text-cyan"></i> Company Profile</h1></div>
+    <div class="page-header"><h1><i class="bi bi-building"></i> Company Profile</h1></div>
     <div class="row g-3">
         <div class="col-md-6"><div class="card card-vms"><div class="card-header">Company Identity</div><div class="card-body">
             <div class="mb-2"><label class="form-label">Company Name</label><p><?= htmlspecialchars($vendor['company_name']) ?></p></div>

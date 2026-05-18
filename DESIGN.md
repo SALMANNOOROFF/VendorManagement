@@ -1,92 +1,98 @@
 ---
-name: High-End Enterprise VMS
+name: Apex Insight
 colors:
-  surface: '#f7fafc'
-  surface-dim: '#d7dadc'
-  surface-bright: '#f7fafc'
+  surface: '#f8f9ff'
+  surface-dim: '#cbdbf5'
+  surface-bright: '#f8f9ff'
   surface-container-lowest: '#ffffff'
-  surface-container-low: '#f1f4f6'
-  surface-container: '#ebeef0'
-  surface-container-high: '#e5e9eb'
-  surface-container-highest: '#e0e3e5'
-  on-surface: '#181c1e'
-  on-surface-variant: '#444748'
-  inverse-surface: '#2d3133'
-  inverse-on-surface: '#eef1f3'
-  outline: '#747878'
-  outline-variant: '#c4c7c8'
-  surface-tint: '#5d5f5f'
-  primary: '#5d5f5f'
+  surface-container-low: '#eff4ff'
+  surface-container: '#e5eeff'
+  surface-container-high: '#dce9ff'
+  surface-container-highest: '#d3e4fe'
+  on-surface: '#0b1c30'
+  on-surface-variant: '#464554'
+  inverse-surface: '#213145'
+  inverse-on-surface: '#eaf1ff'
+  outline: '#767586'
+  outline-variant: '#c7c4d7'
+  surface-tint: '#494bd6'
+  primary: '#4648d4'
   on-primary: '#ffffff'
-  primary-container: '#ffffff'
-  on-primary-container: '#747676'
-  inverse-primary: '#c6c6c7'
-  secondary: '#4e6078'
+  primary-container: '#6063ee'
+  on-primary-container: '#fffbff'
+  inverse-primary: '#c0c1ff'
+  secondary: '#585e6c'
   on-secondary: '#ffffff'
-  secondary-container: '#cfe1fd'
-  on-secondary-container: '#52647c'
-  tertiary: '#5d5f5f'
+  secondary-container: '#dde2f3'
+  on-secondary-container: '#5e6473'
+  tertiary: '#006c49'
   on-tertiary: '#ffffff'
-  tertiary-container: '#ffffff'
-  on-tertiary-container: '#747676'
+  tertiary-container: '#00885d'
+  on-tertiary-container: '#000703'
   error: '#ba1a1a'
   on-error: '#ffffff'
   error-container: '#ffdad6'
   on-error-container: '#93000a'
-  primary-fixed: '#e2e2e2'
-  primary-fixed-dim: '#c6c6c7'
-  on-primary-fixed: '#1a1c1c'
-  on-primary-fixed-variant: '#454747'
-  secondary-fixed: '#d3e4ff'
-  secondary-fixed-dim: '#b6c8e4'
-  on-secondary-fixed: '#091c31'
-  on-secondary-fixed-variant: '#37485f'
-  tertiary-fixed: '#e2e2e2'
-  tertiary-fixed-dim: '#c6c6c7'
-  on-tertiary-fixed: '#1a1c1c'
-  on-tertiary-fixed-variant: '#454747'
-  background: '#f7fafc'
-  on-background: '#181c1e'
-  surface-variant: '#e0e3e5'
+  primary-fixed: '#e1e0ff'
+  primary-fixed-dim: '#c0c1ff'
+  on-primary-fixed: '#07006c'
+  on-primary-fixed-variant: '#2f2ebe'
+  secondary-fixed: '#dde2f3'
+  secondary-fixed-dim: '#c1c6d7'
+  on-secondary-fixed: '#161c27'
+  on-secondary-fixed-variant: '#414754'
+  tertiary-fixed: '#6ffbbe'
+  tertiary-fixed-dim: '#4edea3'
+  on-tertiary-fixed: '#002113'
+  on-tertiary-fixed-variant: '#005236'
+  background: '#f8f9ff'
+  on-background: '#0b1c30'
+  surface-variant: '#d3e4fe'
 typography:
-  h1:
+  headline-lg:
     fontFamily: Inter
-    fontSize: 32px
+    fontSize: 28px
     fontWeight: '700'
-    lineHeight: '1.2'
+    lineHeight: 36px
     letterSpacing: -0.02em
-  h2:
+  headline-md:
     fontFamily: Inter
-    fontSize: 24px
+    fontSize: 20px
     fontWeight: '600'
-    lineHeight: '1.3'
+    lineHeight: 28px
     letterSpacing: -0.01em
-  h3:
+  headline-sm:
     fontFamily: Inter
-    fontSize: 18px
+    fontSize: 16px
     fontWeight: '600'
-    lineHeight: '1.4'
+    lineHeight: 24px
   body-lg:
     fontFamily: Inter
     fontSize: 16px
     fontWeight: '400'
-    lineHeight: '1.6'
+    lineHeight: 24px
   body-md:
     fontFamily: Inter
     fontSize: 14px
     fontWeight: '400'
-    lineHeight: '1.5'
-  label-caps:
+    lineHeight: 20px
+  body-sm:
     fontFamily: Inter
     fontSize: 12px
-    fontWeight: '600'
-    lineHeight: '1'
+    fontWeight: '400'
+    lineHeight: 18px
+  label-bold:
+    fontFamily: Inter
+    fontSize: 12px
+    fontWeight: '700'
+    lineHeight: 16px
     letterSpacing: 0.05em
-  status:
+  data-display:
     fontFamily: Inter
-    fontSize: 12px
-    fontWeight: '500'
-    lineHeight: '1'
+    fontSize: 32px
+    fontWeight: '700'
+    lineHeight: 40px
+    letterSpacing: -0.03em
 rounded:
   sm: 0.25rem
   DEFAULT: 0.5rem
@@ -95,60 +101,82 @@ rounded:
   xl: 1.5rem
   full: 9999px
 spacing:
-  unit: 8px
-  container-max: 1440px
-  sidebar-width: 260px
-  gutter: 24px
-  margin-page: 40px
+  container-margin: 24px
+  gutter: 20px
   card-padding: 24px
+  stack-sm: 8px
+  stack-md: 16px
 ---
 
 ## Brand & Style
 
-The brand personality is authoritative yet technologically forward-thinking. It targets enterprise procurement officers and supply chain directors who require a tool that feels as reliable as a legacy system but as fast as a modern SaaS startup. The UI should evoke a sense of clarity, efficiency, and premium "Swiss" precision.
+This design system is engineered for high-density information environments where clarity and efficiency are paramount. The aesthetic follows a **Corporate / Modern** approach, blending the structured reliability of enterprise software with the vibrant, approachable feel of contemporary SaaS.
 
-The design system utilizes a **Corporate Modern** style with a heavy emphasis on **Minimalism**. By using a restricted palette of deep navy and crisp white, the interface recedes to let the vendor data and metrics take center stage. The aesthetic is strictly flat, avoiding skeuomorphic gradients or heavy bevels, instead relying on precise geometry and generous whitespace to communicate sophistication.
+The personality is authoritative yet helpful—providing the user with a powerful "control center" feel. It prioritizes functional minimalism, using a light-blue tinted background to reduce eye strain during long working sessions, while employing sharp accents of purple and emerald to guide the user's attention toward critical actions and data insights.
 
 ## Colors
 
-The palette is anchored by **Clean Aesthetic White (#FFFFFF)** for the main workspace and content cards, ensuring maximum legibility and a sense of "digital air." This is contrasted sharply by **Deep Professional Blue (#0B1E33)**, which is reserved for the fixed sidebar and primary typography to establish a clear structural hierarchy.
+The palette is anchored by a deep navy/charcoal (#1a202c) used for high-level navigation and headers to establish a strong structural frame. The primary action color is a vibrant Indigo (#6366f1), providing a modern, digital-first feel for buttons and active states.
 
-**Vibrant Cyan (#00E5FF)** serves as the high-energy accent. It is used sparingly but purposefully for interactive elements, progress indicators, and active states. This neon-adjacent hue injects a modern, tech-centric feel into the otherwise conservative corporate palette. Neutral grays are used exclusively for subtle borders and secondary backgrounds to prevent the interface from feeling stark.
+- **Success & Positive:** Use Emerald (#10b981) for "Approved" statuses and growth metrics.
+- **Warning & Pending:** Use Amber (#f59e0b) for cautionary data or tasks awaiting action.
+- **Surface & Background:** The main canvas is a soft Slate (#f8fafc), which allows white card components to pop with subtle definition.
+- **Data Viz:** A diverse, high-contrast 5-color palette ensures distinct categories remain legible in complex charts and donut distributions.
 
 ## Typography
 
-This design system utilizes **Inter** exclusively to achieve a systematic, utilitarian aesthetic. As a typeface designed for screens, its tall x-height and neutral character provide the clarity needed for complex data grids and vendor profiles.
+This design system utilizes **Inter** exclusively to leverage its exceptional legibility in data-heavy interfaces. 
 
-Headlines use a tighter letter-spacing and heavier weights in the Deep Professional Blue to command attention. Body text is optimized for long-form reading in procurement contracts, utilizing a slightly softer gray to reduce eye strain. Data labels use an uppercase style with increased tracking to differentiate them from interactive text.
+- **Hierarchy:** Use `data-display` for hero metrics within stats cards. 
+- **Labels:** `label-bold` is intended for table headers and small metadata categories, using uppercase styling to differentiate from interactive body text.
+- **Mobile Scaling:** On mobile devices, `headline-lg` should scale down to 24px. Large data points should maintain their weight but may reduce to 28px to prevent container overflow.
 
 ## Layout & Spacing
 
-The layout follows a **Fixed-Fluid Hybrid** model. A fixed sidebar remains anchored to the left, while the main content area utilizes a fluid 12-column grid that expands to a maximum width of 1440px to maintain readability on ultra-wide monitors.
+The system uses a **Fluid Grid** model with fixed maximum widths for readability on ultra-wide monitors.
 
-The spacing rhythm is built on a strict **8px base unit**. Generous whitespace (margins of 40px) is used to separate high-level sections, creating a "premium gallery" feel where information is never cramped. Padding within cards and tables is consistently 24px (3 units) to ensure data-heavy views remain approachable and organized.
+- **Grid:** A 12-column system is used for the main dashboard. Standard metric cards occupy 3 columns (4 per row), while primary data visualizations occupy 6-8 columns.
+- **Breakpoints:**
+  - **Desktop (1280px+):** Full 12-column layout, 24px margins.
+  - **Tablet (768px - 1279px):** 6-column layout, cards stack into 2 columns.
+  - **Mobile (Below 768px):** Single column layout, 16px horizontal margins.
+- **Rhythm:** An 8px base unit governs all padding and margins to maintain a strict geometric alignment.
 
 ## Elevation & Depth
 
-In keeping with the flat design philosophy, depth is communicated through **tonal layering and low-contrast outlines** rather than heavy shadows. 
+Visual hierarchy is achieved through a **Tonal Layering** approach combined with **Ambient Shadows**.
 
-The primary canvas is a very light neutral, while cards and content areas are pure white. To create separation, cards utilize a 1px border in a soft neutral or a very subtle "ambient shadow"—a 4px blur with 4% opacity of the secondary blue. The navbar uses a slightly more pronounced but still restrained shadow to indicate it sits above the scrolling content. This creates a "stacked paper" effect that feels light and modern.
+- **Level 0 (Background):** The Slate #f8fafc background acts as the lowest layer.
+- **Level 1 (Cards):** Main content containers are pure white with a very soft, diffused shadow (`box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05)`).
+- **Level 2 (Dropdowns/Modals):** Elements that float above the grid use a more pronounced shadow to indicate temporal presence.
+- **Outlines:** Use 1px borders in #e2e8f0 for internal card dividers and table rows to provide structure without adding visual weight.
 
 ## Shapes
 
-The design system employs a **Rounded (8px)** shape language. This specific radius strikes a balance between the clinical sharpness of 0px corners and the overly casual nature of fully rounded pill shapes. 
+The design system uses a **Rounded** (Level 2) shape language to soften the density of the data-heavy layout.
 
-This 8px radius is applied consistently across cards, action buttons, and input fields. Smaller elements, such as status badges and checkboxes, may use a 4px radius to maintain visual proportion. The consistency of these radiuses reinforces the professional, systematic nature of the enterprise software.
+- **Standard (8px):** Applied to cards, input fields, and primary buttons.
+- **Large (16px):** Used for decorative elements or containers that hold groups of cards.
+- **Pill:** Reserved exclusively for status badges and tags (e.g., "Approved", "Pending") to make them instantly recognizable as non-interactive status indicators.
 
 ## Components
 
-**Buttons:** Primary actions are solid Cyan (#00E5FF) with White text, using the 8px radius. Secondary actions use a ghost style with a Deep Blue border and text.
+### Buttons
+- **Primary:** Solid Indigo (#6366f1) with white text. 8px corner radius.
+- **Secondary:** Transparent background with Indigo border and text.
+- **Ghost:** No border, Slate text, becomes lightly gray on hover.
 
-**Fixed Sidebar:** Rendered in Deep Blue (#0B1E33). Icons should be stroke-based and 20px, turning Cyan when active. An active menu item is indicated by a vertical Cyan bar on the left edge.
+### Cards & Statistics
+- Statistics cards should feature a large `data-display` value, a descriptive `headline-sm` title, and a small icon or sparkline colored by the metric's health (e.g., green for positive growth).
 
-**Inputs:** Ghost-style inputs with a 1px light gray border. Upon focus, the border transitions to 1px Cyan (#00E5FF) with a subtle 2px Cyan outer glow.
+### Tables
+- Headers use `label-bold` with a light gray background (#f1f5f9).
+- Rows feature a subtle hover state (#f8fafc) and 1px bottom borders.
+- Text alignment: Numerical data should be right-aligned; status badges and text should be left-aligned.
 
-**Status Badges:** 'Active' status badges feature a light Cyan background (15% opacity) with solid Cyan text. Other statuses (e.g., Pending, Inactive) use the same logic with neutral or semantic colors.
+### Status Badges
+- Use a "Soft Fill" style: A 10-15% opacity version of the status color for the background with the 100% opacity color for the text. 
+- *Example:* "Approved" uses a light emerald background with dark emerald text.
 
-**Cards:** Pure White (#FFFFFF) backgrounds with 8px rounded corners and a 1px light gray border. Headers within cards should be separated by a subtle horizontal rule.
-
-**Data Tables:** Clean, no vertical borders. Row hover states should use a very faint Blue tint to guide the user's eye without breaking the minimalist aesthetic.
+### Inputs
+- Fields use a 1px border (#cbd5e1), white background, and 8px radius. On focus, the border transitions to Indigo with a subtle outer glow.

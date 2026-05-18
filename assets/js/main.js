@@ -33,16 +33,39 @@ $(document).ready(function() {
         }
     });
 
+    $(document).on('click', '.step', function() {
+        const targetStep = parseInt($(this).data('step'));
+        if (targetStep === currentStep) return;
+
+        // If moving forward, validate current step
+        if (targetStep > currentStep) {
+            if (!validateStep(currentStep)) return;
+        }
+
+        showStep(targetStep);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
     function validateStep(step) {
         let valid = true;
         $('#step-' + step).find('input, select, textarea').each(function() {
             if (typeof this.checkValidity === 'function' && !this.checkValidity()) {
-                $(this).addClass('is-invalid');
+                $(this).addClass('is-invalid').addClass('is-invalid-shake');
+                const $el = $(this);
+                setTimeout(function() { $el.removeClass('is-invalid-shake'); }, 500);
                 valid = false;
             } else {
                 $(this).removeClass('is-invalid');
             }
         });
+        
+        // Remove error outline in real-time when user types
+        $('#step-' + step).off('input change', 'input, select, textarea').on('input change', 'input, select, textarea', function() {
+            if (typeof this.checkValidity === 'function' && this.checkValidity()) {
+                $(this).removeClass('is-invalid');
+            }
+        });
+
         if (!valid) showToast('Please fill all required fields correctly.', 'warning');
         return valid;
     }
@@ -67,10 +90,52 @@ $(document).ready(function() {
     window.showToast = function(msg, type) {
         type = type || 'info';
         const icons = { success: '✓', danger: '✕', warning: '⚠', info: 'ℹ' };
-        const $t = $('<div class="alert alert-vms alert-' + type + ' fade-in" style="position:fixed;top:80px;right:20px;z-index:9999;min-width:300px;box-shadow:0 8px 32px rgba(0,0,0,0.3)">' +
-            '<span style="font-size:1.2rem">' + (icons[type]||'') + '</span> ' + msg + '</div>');
+        
+        // Remove existing toasts to prevent stacking issues (optional, but keeps it clean)
+        $('.alert-toast').remove();
+        
+        const $t = $('<div class="alert alert-vms alert-' + type + ' fade-in alert-toast" style="position:fixed;bottom:30px;right:30px;z-index:9999;min-width:300px;box-shadow:var(--shadow-lg); border-radius:var(--radius);">' +
+            '<span style="font-size:1.2rem; margin-right:10px;">' + (icons[type]||'') + '</span> ' + msg + '</div>');
         $('body').append($t);
         setTimeout(function() { $t.fadeOut(400, function() { $t.remove(); }); }, 4000);
+    };
+
+    // === GLOBAL ACTION MODAL ===
+    window.showActionModal = function(title, message, btnText, btnColor, requireRemarks, callback) {
+        const $modal = $('#globalActionModal');
+        $modal.find('#actionModalTitle').text(title);
+        $modal.find('#actionModalMessage').text(message);
+        
+        const $remarks = $modal.find('#actionModalRemarks');
+        $remarks.val(''); // Clear previous
+        
+        if (requireRemarks) {
+            $remarks.attr('placeholder', 'Remarks are required...').attr('required', true);
+        } else {
+            $remarks.attr('placeholder', 'Optional remarks...').removeAttr('required');
+        }
+
+        const $btn = $modal.find('#actionModalConfirmBtn');
+        $btn.text(btnText)
+            .removeClass()
+            .addClass('btn rounded-pill px-4 text-white')
+            .css('background-color', btnColor)
+            .css('border-color', btnColor);
+
+        // Remove previous event listeners
+        $btn.off('click').on('click', function() {
+            const remarks = $remarks.val().trim();
+            if (requireRemarks && remarks === '') {
+                showToast('Please provide remarks to proceed.', 'warning');
+                $remarks.focus();
+                return;
+            }
+            callback(remarks);
+            $modal.modal('hide');
+        });
+
+        // Show modal using Bootstrap jQuery API
+        $modal.modal('show');
     };
 
     // === FORM FIELD TOGGLE (Admin) ===
@@ -89,7 +154,7 @@ $(document).ready(function() {
 
     // === INPUT FOCUS EFFECTS ===
     $('.form-control-vms').on('focus', function() {
-        $(this).closest('.mb-3').find('.form-label').css('color', 'var(--cyan)');
+        $(this).closest('.mb-3').find('.form-label').css('color', 'var(--primary)');
     }).on('blur', function() {
         $(this).closest('.mb-3').find('.form-label').css('color', '');
     });

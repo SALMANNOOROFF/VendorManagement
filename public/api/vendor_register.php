@@ -7,6 +7,7 @@ require_once __DIR__ . '/../../classes/User.php';
 require_once __DIR__ . '/../../classes/Vendor.php';
 require_once __DIR__ . '/../../classes/FileUpload.php';
 require_once __DIR__ . '/../../classes/AuditLog.php';
+require_once __DIR__ . '/../../classes/FormConfig.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'message' => 'POST only']); exit;

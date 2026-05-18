@@ -5,13 +5,14 @@ require_once __DIR__ . '/../../classes/AuditLog.php';
 $al = new AuditLog();
 $logs = $al->getAll(100);
 $pageTitle = 'Audit Logs';
-require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/sidebar_admin.php';
+require_once __DIR__ . '/../../includes/header.php';
 ?>
 <div class="main-content fade-in">
-    <div class="page-header"><h1><i class="bi bi-clock-history text-cyan"></i> Audit Logs</h1><p>System activity trail</p></div>
+    <div class="page-header"><h1><i class="bi bi-clock-history"></i> Audit Logs</h1><p>System activity trail</p></div>
     <div class="card card-vms">
         <div class="card-body p-0">
+            <div class="table-responsive">
             <table class="table table-vms mb-0">
                 <thead><tr><th>Time</th><th>User</th><th>Action</th><th>Entity</th><th>IP</th></tr></thead>
                 <tbody>
@@ -27,6 +28,7 @@ require_once __DIR__ . '/../../includes/sidebar_admin.php';
                 <?php if (empty($logs)): ?><tr><td colspan="5" class="empty-state"><i class="bi bi-inbox"></i>No logs yet</td></tr><?php endif; ?>
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 </div>
