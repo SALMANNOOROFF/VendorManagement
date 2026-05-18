@@ -139,11 +139,5 @@ For local demonstration and evaluation, you can log in using these preset creden
 | **Approver** | `approver` | `approver123` |
 | **Vendor** | `vendor` | `vendor123` |
 
----
-
-## 🏆 Development Milestones & Visual Polish
-* **Dynamic Modals**: Replaced old basic Javascript alert popups with rich, smooth Bootstrap Action Modals for approvals, rejections, and remarks.
-* **Toasts Notifications**: Seamless toast alerts appear on the top/bottom right corners of the window to confirm user actions dynamically.
-* **Micro-interactions**: Embedded subtle rotations on bell icons, dynamic navigation expansions, and fluid scaling transitions on core branding.
 
 Enjoy building with VMS Portal! 🛡️
